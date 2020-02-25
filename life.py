@@ -44,7 +44,7 @@ class Life(object):
             elif command == 'acorn':
                 self.create_acorn()
             elif command == 'change-display':
-                self.change_display(parameter)
+                self.change_graphics(parameter)
             elif command == 'save':
                 self.save(parameter, './worlds')
             elif command == 'load':
@@ -54,6 +54,7 @@ class Life(object):
             elif command == 'back':
                 self.__menu = 'main'
             self.get_menu()
+            self.__menu = 'main'
             command, parameter = self.get_command()
 
     def get_menu(self):
@@ -265,7 +266,7 @@ class Life(object):
     def show_status(self):
         """
         diplays the size of the world, the percent alive, the speed, and the generation
-        :return:
+        :return: string
         """
         string = f'Size: {self.__world.get_rows()}x{self.__world.get_columns()}  Alive: {self.calculate_percentage()}%'
         string += f'  Delay:  {self.__delay} second(s)   Generation: {self.__generation}\n'
@@ -333,35 +334,40 @@ class Life(object):
         sleep(2)
         print(self.__world)
 
-    def change_display(self, parameter):
-        """
-        Change the live and dead characters for the cells.
-        :param parameter: option to change the cells to if specified by user in menu
-        :return:
-        """
-        if toolbox.is_integer(parameter) and \
-                1 <= int(parameter) <= len(Cell.displaySets.keys()):
-            setNumber = int(parameter)
+    def change_graphics(self, whichCharacters):
+        """Change the live and dead characters for the cells."""
+        if toolbox.is_integer(whichCharacters) and \
+                1 <= int(whichCharacters) <= len(Cell.displaySets.keys()):
+            whichCharacters = int(whichCharacters)
         else:
             print('**************************************')
             for number, set in enumerate(Cell.displaySets):
                 liveChar = Cell.displaySets[set]['liveChar']
                 deadChar = Cell.displaySets[set]['deadChar']
                 print(f'{number + 1}: living cells: {liveChar} dead cells: {deadChar}')
+            print(f'{number + 2}: pick your own characters')
             print('**************************************')
             prompt = 'What character set would you like to use?'
-            setNumber = toolbox.get_integer_between(1, number + 1, prompt)
-        if setNumber == 7:
-            print('hi')
-            Cell.displaySets.append({'user2': {'liveChar': self.get_alive_graphic(), 'deadChar': self.get_dead_graphic()}})
-            setString = list(Cell.displaySets.keys())[7]
-        else:
-            setString = list(Cell.displaySets.keys())[setNumber - 1]
+            whichCharacters = toolbox.get_integer_between(1, number + 2, prompt)
+            if whichCharacters == number + 2:
+                alive = toolbox.get_string('Which character should represent alive cells?')
+                dead = toolbox.get_string('Which character should represent dead cells?')
+                Cell.set_display_user_values(alive, dead)
+        setString = list(Cell.displaySets.keys())[whichCharacters - 1]
         Cell.set_display(setString)
-        print(f"\n...Display changing to {Cell.liveChar} for alive cells and {Cell.deadChar} for dead cells...\n")
-        sleep(2)
-        print(self.__world, end='')
-        #print(self.show_status() + '\n' + self.menu(), end=' ')
+        self.display()
+
+    def display(self):
+        """
+        Prints the world, status bar and menu
+        :return:
+        """
+        print(self.__world)
+        print(self.show_status())
+        """if self.__menu == 'main':
+            print(self.__world, self.show_status())
+        elif self.__menu == 'more':
+            print(self.__world, self.show_status())"""
 
     def get_alive_graphic(self):
         """
@@ -423,8 +429,8 @@ class Life(object):
 
 
     """if __name__ =='__main__':
-    simulation = Life()
-    simulation.main()"""
+        simulation = Life()
+        simulation.main()"""
 
 
 

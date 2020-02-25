@@ -6,8 +6,7 @@ class Cell(object):
                     'circles': {'liveChar': '\u26AA', 'deadChar': '\u26AB'},
                     'baseball': {'liveChar': '\u26BE', 'deadChar': '\u26F3'},
                     'atsign': {'liveChar': '@', 'deadChar': ' '},
-                    'check': {'liveChar': '\u2705', 'deadChar': '\u274C'},
-                    'user': {'liveChar': '*your choice*', 'deadChar': '*your choice*'}
+                    'check': {'liveChar': '\u2705', 'deadChar': '\u274C'}
 
     }
 
@@ -35,6 +34,18 @@ class Cell(object):
         #cls.deadChar = deadChar
         else:
             raise ValueError(f'DisplaySet must be in {legalValues}.')
+
+    @classmethod
+    def set_display_user_values(cls, alive, dead):
+        """
+        Add an item to the displaySets for user defined characters.
+        :param alive: character string that represents alive cells.
+        :param dead: character string that represents dead cells.
+        :return: None
+        """
+        numberOfCharacterSets = len(Cell.displaySets)
+        key = f'user defined {numberOfCharacterSets}'
+        Cell.displaySets[key] = {'liveChar': alive, 'deadChar': dead}
 
     def __init__(self, row, column):
         """Given a row and a column, creates a cell that knows its row,
