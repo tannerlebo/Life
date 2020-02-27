@@ -1,5 +1,6 @@
 from world import World
 from cell import Cell
+from world_torus import World_Torus
 import toolbox
 from time import sleep
 import os
@@ -7,7 +8,7 @@ import os
 class Life(object):
 
     def __init__(self):
-        self.__world = World(13,51)
+        self.__world = World_Torus(13,51)
         self.__percentage = 50
         self.__world.randomize()
         self.__delay = 0.5

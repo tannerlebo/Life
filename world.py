@@ -4,6 +4,11 @@ class World(object):
 
     @classmethod
     def from_file(cls, filename):
+        """
+        Takes world from file and converts it to graphics the user wanats.
+        :param filename:
+        :return: the new world they loaded
+        """
         with open(filename, 'r') as myFile:
             text = myFile.readlines()
 
@@ -50,10 +55,13 @@ class World(object):
         return string
 
     def create_grid(self):
-        """Return the grid as a list of lists. There should be one list
+        """
+        Return the grid as a list of lists. There should be one list
         to contain the entire grid and in that list there should be one
         list to contain each row in the generation. Each of the "row lists"
-        should contain one object of class Cell for each column in the world."""
+        should contain one object of class Cell for each column in the world.
+        :return: a list of the grid
+        """
 
         grid = []
         for rowNumber in range(self._rows):
@@ -64,7 +72,10 @@ class World(object):
         return grid
 
     def create_neighbors(self):
-        """Loop through the grid and assign the neighbors to each cell."""
+        """
+        Loop through the grid and assign the neighbors to each cell.
+        :return:
+        """
         for row in self._grid:
             for cell in row:
                 #
@@ -90,11 +101,6 @@ class World(object):
                         cell.add_neighbor(self._grid[row][column + 1])
                         cell.add_neighbor(self._grid[row + 1][column])
                         cell.add_neighbor(self._grid[row + 1][column + 1])
-                        cell.add_neighbor(self._grid[self._rows - 1][column])
-                        cell.add_neighbor(self._grid[self._rows - 1][self._columns - 1])
-                        cell.add_neighbor(self._grid[row][self._columns - 1])
-                        cell.add_neighbor(self._grid[self._rows - 1][column])
-                        cell.add_neighbor(self._grid[row][self._columns - 1])
                     elif column < (self._columns - 1):
                         #print('upper')
                         cell.add_neighbor(self._grid[row][column - 1])
@@ -102,20 +108,11 @@ class World(object):
                         cell.add_neighbor(self._grid[row + 1][column - 1])
                         cell.add_neighbor(self._grid[row + 1][column])
                         cell.add_neighbor(self._grid[row + 1][column + 1])
-                        cell.add_neighbor(self._grid[self._rows - 1][column - 1])
-                        cell.add_neighbor(self._grid[self._rows - 1][column])
-                        cell.add_neighbor(self._grid[self._rows - 1][column + 1])
-
                     else:
                         #print('upper right')
                         cell.add_neighbor(self._grid[row][column - 1])
                         cell.add_neighbor(self._grid[row + 1][column - 1])
                         cell.add_neighbor(self._grid[row + 1][column])
-                        cell.add_neighbor(self._grid[row + 1][0])
-                        cell.add_neighbor(self._grid[row][0])
-                        cell.add_neighbor(self._grid[self._rows - 1][0])
-                        cell.add_neighbor(self._grid[self._rows - 1][column])
-                        cell.add_neighbor(self._grid[self._rows - 1][self._columns - 1])
                 # middle area
                 elif row < (self._rows - 1):
                     if column == 0:
@@ -125,9 +122,6 @@ class World(object):
                         cell.add_neighbor(self._grid[row + 1][column + 1])
                         cell.add_neighbor(self._grid[row - 1][column])
                         cell.add_neighbor(self._grid[row - 1][column + 1])
-                        cell.add_neighbor(self._grid[row - 1][self._columns - 1])
-                        cell.add_neighbor(self._grid[row][self._columns - 1])
-                        cell.add_neighbor(self._grid[row][self._columns - 1])
                     elif column < (self._columns - 1):
                         #print('normal')
                         cell.add_neighbor(self._grid[row][column + 1])
@@ -145,9 +139,6 @@ class World(object):
                         cell.add_neighbor(self._grid[row + 1][column - 1])
                         cell.add_neighbor(self._grid[row - 1][column])
                         cell.add_neighbor(self._grid[row - 1][column - 1])
-                        cell.add_neighbor(self._grid[row - 1][0])
-                        cell.add_neighbor(self._grid[row][0])
-                        cell.add_neighbor(self._grid[row][0])
                 # bottom row
                 else:
                     if column == 0:
@@ -155,11 +146,6 @@ class World(object):
                         cell.add_neighbor(self._grid[row][column + 1])
                         cell.add_neighbor(self._grid[row - 1][column])
                         cell.add_neighbor(self._grid[row - 1][column + 1])
-                        cell.add_neighbor(self._grid[row - 1][self._columns - 1])
-                        cell.add_neighbor(self._grid[row][self._columns - 1])
-                        cell.add_neighbor(self._grid[0][self._columns - 1])
-                        cell.add_neighbor(self._grid[0][column])
-                        cell.add_neighbor(self._grid[0][column + 1])
                     elif column < (self._columns - 1):
                         #print('lower')
                         cell.add_neighbor(self._grid[row][column - 1])
@@ -167,28 +153,29 @@ class World(object):
                         cell.add_neighbor(self._grid[row - 1][column - 1])
                         cell.add_neighbor(self._grid[row - 1][column])
                         cell.add_neighbor(self._grid[row - 1][column + 1])
-                        cell.add_neighbor(self._grid[0][column - 1])
-                        cell.add_neighbor(self._grid[0][column])
-                        cell.add_neighbor(self._grid[0][column + 1])
                     else:
                         #print('lower right')
                         cell.add_neighbor(self._grid[row][column - 1])
                         cell.add_neighbor(self._grid[row - 1][column - 1])
                         cell.add_neighbor(self._grid[row - 1][column])
-                        cell.add_neighbor(self._grid[row - 1][0])
-                        cell.add_neighbor(self._grid[row][0])
-                        cell.add_neighbor(self._grid[0][0])
-                        cell.add_neighbor(self._grid[0][column])
-                        cell.add_neighbor(self._grid[0][column - 1])
 
     def set_cell(self, row, column, living):
-        """Change the state of the cell at self.__grid[row][column] to the
-         value of living."""
+        """
+        Change the state of the cell at self.__grid[row][column] to the
+         value of living.
+        :param row: the row the cell is in
+        :param column: the column the cell is it
+        :param living: whether the cells is live or dead
+        :return:
+        """
         self._grid[row][column].set_living(living)
 
     def next_generation(self):
-        """Changes the grid to the next generation after following the
-        propagation rules. """
+        """
+        Changes the grid to the next generation after following the
+        propagation rules.
+        :return:
+        """
         newGrid = self.create_grid()
         for row in self._grid:
             for cell in row:
@@ -202,7 +189,11 @@ class World(object):
         self.create_neighbors()
 
     def randomize(self, percentage=50):
-        """Takes a cell and randomizes whether it is dead or alive."""
+        """
+        Takes a cell and randomizes whether it is dead or alive.
+        :param percentage: percent change a cell is alive
+        :return:
+        """
         newGrid = self.create_grid()
         for row in self._grid:
             for cell in row:
@@ -224,6 +215,10 @@ class World(object):
         return self._grid
 
     def longl(self):
+        """
+        sets cells as a long l
+        :return:
+        """
         self.set_cell(6, 25, True)
         self.set_cell(5, 25, True)
         self.set_cell(4, 25, True)
@@ -231,6 +226,10 @@ class World(object):
         self.set_cell(7, 26, True)
 
     def acorn(self):
+        """
+        sets cells as an acorn
+        :return:
+        """
         self.set_cell(5, 25, True)
         self.set_cell(4, 23, True)
         self.set_cell(6, 26, True)
@@ -240,6 +239,11 @@ class World(object):
         self.set_cell(6, 22, True)
 
     def save(self, filename):
+        """
+        opens the file as the basic display set and saves it as such
+        :param filename: name they want to call the file
+        :return:
+        """
         currentDisplaySet = Cell.currentDisplaySet
         Cell.set_display('basic')
         text = self.__str__()
