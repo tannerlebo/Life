@@ -1,0 +1,52 @@
+****************************************************************************************************
+****************************************************************************************************
+**                                                                                                **
+**                           **      **  ******  ******                                           **
+**                           **      **  ******  ******                                           **
+**                           **      **  **      **                                               **
+**                           **      **  ****    ****                                             **
+**                           **      **  ****    ****                                             **
+**                           **      **  **      **                                               **
+**                           ******  **  **      ******                                           **
+**                           ******  **  **      ******  Version 0.9                              **
+**                                                                                                **
+**    This program implements a cellular biology simulation. Each cell can have 8 neighboring     **
+**    cells. The state of a cell is determined by the number of neighbors that cell has:          **
+**                                                                                                **
+**       0 to 1 neighbors dies of lack of symbiotic nutrients                                     **
+**       2 to 3 neighbors lives comfortably                                                       **
+**       4 to 8 neighbors dies of over crowding                                                   **
+**       exactly 3 neighbors a new cell is generated                                              **
+**                                                                                                **
+**    You can use the following commands:                                                         **
+**                                                                                                **
+**       Next Generation    (N): displays the next generation of cell life                        **
+**       Run X Generations  (R): displays the next X generations of cell life                     **
+**       Jump X Generations (J): skip over the next X generations of cell life                    **
+**       New Random Gen     (E): redraws the screen with a random sample of cells                 **
+**       Fillrate           (F): changes the fill rate when generating a new world                **
+**       Delay              (D): changes the delay between generations                            **
+**       Size               (S): changes the dimensions of the world                              **
+**                               																  **
+**       Save               (V): saves your current world to a file of your choice                **
+**                       																	 	  **
+**       Load               (O): loads a world into life you have saved in a file                 **   
+**                         																	 	  **
+**       Graphics           (G): changes alive and dead characters for the world                  **   
+**                         																	  	  **
+**       Rules              (U): changes the rules of the world (how many neighbors it 	          **
+**				 	             takes for a cell to become alive in the next generation, 	      **		
+**		 		 	             or how many neighbors it takes for a cell to stay alive 	      **		
+**		 		 	             in the next generation                        		              **
+**                       																	  	  **
+**       WorldType          (W): changes the type of world(Normal with boundaries, or             **	
+**				                 Torus where the world wraps around like in PacMan)               **
+**                       																	  	  **
+**       More               (M): takes you to other submenu   	                        		  **
+**                       																	 	  **
+**       Help               (H): displays this help screen                                        **
+**       Quit               (Q): quits the program                                                **
+**                                                                                                **
+**       Most commands will take parameters such as: r100   f25   d0.5   s20x100                  **
+****************************************************************************************************
+****************************************************************************************************

@@ -1,6 +1,7 @@
 from world import World
 from cell import Cell
 from world_torus import World_Torus
+from rules import Rules
 import toolbox
 from time import sleep
 import os
@@ -8,20 +9,20 @@ import os
 class Life(object):
 
     def __init__(self):
-        self.__world = World_Torus(13,51)
+        self.__worldType = World
+        self.__world = self.__worldType(13, 51)
         self.__percentage = 50
         self.__world.randomize()
         self.__delay = 0.5
         self.__generation = 1
         self.__menu = 'main'
-        self.main()
 
     def main(self):
         """Main event loop for world."""
         command = 'help'
         while command != 'quit':
             if command == 'help':
-                self.help('help.txt')
+                self.help('lifehelp.txt')
                 print(f'\n{self.__world}')
                 self.show_status()
             elif command == 'new-world':
@@ -40,20 +41,20 @@ class Life(object):
                 print(self.__world.get_grid())
                 print(self.__world.get_rows())
                 self.get_speed(parameter)
-            elif command == 'longl':
-                self.create_longl()
-            elif command == 'acorn':
-                self.create_acorn()
             elif command == 'change-display':
                 self.change_graphics(parameter)
             elif command == 'save':
-                self.save(parameter, './worlds')
+                self.save(parameter, './worlds/')
             elif command == 'load':
-                self.load(parameter, './worlds')
+                self.load(parameter, './worlds/')
             elif command == 'more':
                 self.__menu = 'more'
             elif command == 'back':
                 self.__menu = 'main'
+            elif command == 'world-type':
+                self.get_geometry()
+            elif command == 'change-rules':
+                self.change_rules(parameter)
             self.get_menu()
             self.__menu = 'main'
             command, parameter = self.get_command()
@@ -66,7 +67,7 @@ class Life(object):
         if self.__menu == 'main':
             print("N[E]w  [N]ext  [R]un  [F]illrate  [J]ump  [S]ize  [J]ump  Sa[V]e  L[O]ad  [M]ore  [H]elp  [Q]uit")
         if self.__menu == 'more':
-            print("[D]elay  [L]ong L  [A]corn  [G]raphics  Sa[V]e  L[O]ad  [B]ack  [H]elp  [Q]uit")
+            print("[D]elay  [G]raphics  R[U]les  Sa[V]e  L[O]ad  [W]orldType  [B]ack  [H]elp  [Q]uit")
 
     def get_command(self):
         """
@@ -80,16 +81,16 @@ class Life(object):
                     's': 'change-size',
                     'r': 'run-simulation',
                     'j': 'jump-generations',
-                    'l': 'longl',
-                    'a': 'acorn',
                     'd': 'delay',
                     'v': 'save',
                     'o': 'load',
                     'h': 'help',
                     '?': 'help',
                     'g': 'change-display',
+                    'u': 'change-rules',
                     'm': 'more',
                     'b': 'back',
+                    'w': 'world-type',
                     'q': 'quit'}
 
         validCommands = commands.keys()
@@ -100,6 +101,8 @@ class Life(object):
             if userInput != '':
                 letter = userInput[0].lower()
                 parameter = userInput[1:].strip()
+                if parameter == '':
+                    parameter = None
             else:
                 letter = 'n'
                 parameter = None
@@ -118,6 +121,7 @@ class Life(object):
         print(help, end='')
         if prompt:
             input('\n'+prompt)
+        hi = input("\n\npress <return> to continue")
 
 
 
@@ -156,13 +160,26 @@ class Life(object):
         """
         if parameter:
             for generation in range(1, (int(parameter) + 1)):
-                self.__world.next_generation()
-            self.__generation += parameter
+                if self.__world.stop_simulation():
+                    print()
+                    print("Simulation is stable.")
+                    print()
+                    break
+                else:
+                    self.__world.next_generation()
+                    self.__generation += 1
+            print(self.__world)
+            self.show_status()
         else:
-            self.__world.next_generation()
-            self.__generation += 1
-        print(self.__world)
-        self.show_status()
+            if self.__world.stop_simulation():
+                print()
+                print('World is stable.')
+                print()
+            else:
+                self.__world.next_generation()
+                self.__generation += 1
+            print(self.__world)
+            self.show_status()
 
     def fillrate(self, parameter):
         """
@@ -187,11 +204,11 @@ class Life(object):
         """
         if parameter and ('x' in parameter):
             rows, columns = parameter.split('x', 2)
-            w1 = World(int(rows), int(columns))
+            w1 = self.__worldType(int(rows), int(columns))
         else:
             rows = self.get_rows()
             columns = self.get_columns()
-            w1 = World(rows, columns)
+            w1 = self.__worldType(rows, columns)
         w1.create_grid()
         w1.create_neighbors()
         self.__world = w1
@@ -210,22 +227,34 @@ class Life(object):
         """
         if parameter:
             for generation in range(1, int(parameter)+1):
-                print(f'\nPrinting generation {generation}...\n')
-                self.__world.next_generation()
-                self.__generation += 1
-                sleep(self.__delay)
-                print(self.__world)
-                self.show_status()
+                #stop = self.stop_simulation()
+                if self.__world.stop_simulation():
+                    print()
+                    print("Simulation is stable.")
+                    print()
+                    break
+                else:
+                    self.__world.next_generation()
+                    self.__generation += 1
+                    sleep(self.__delay)
+                    print(self.__world)
+                    self.show_status()
+            print(f"Advanced {generation} generations.\n")
         else:
             for generation in range(1, ((self.get_generations())+1)):
-                print(f'\nPrinting generation {generation}...\n')
-                self.__world.next_generation()
-                sleep(self.__delay)
-                self.__generation += 1
-                print(self.__world)
-                self.show_status()
-
-        print(f"Simulation over. Advanced {generation} generations.\n")
+                #stop = self.stop_simulation()
+                if self.__world.stop_simulation():
+                    print()
+                    print("Simulation is stable.")
+                    print()
+                    break
+                else:
+                    self.__world.next_generation()
+                    sleep(self.__delay)
+                    self.__generation += 1
+                    print(self.__world)
+                    self.show_status()
+            print(f"Simulation over. Advanced {generation} generations.\n")
 
     def jump_generations(self, parameter):
         """
@@ -236,12 +265,30 @@ class Life(object):
 
         if parameter:
             for generation in range(1, (int(parameter) + 1)):
-                self.__world.next_generation()
+                stop = self.stop_simulation()
+                if stop:
+                    print()
+                    print("Simulation is stable.")
+                    print()
+                    break
+                else:
+                    self.__2ndlastworld = self.__lastworld
+                    self.__lastworld = self.__world
+                    self.__world.next_generation()
             self.__generation += parameter
         else:
             for generation in range(1, ((self.get_generations())+1)):
-                self.__world.next_generation()
-                self.__generation += 1
+                stop = self.stop_simulation()
+                if stop:
+                    print()
+                    print("Simulation is stable.")
+                    print()
+                    break
+                else:
+                    self.__2ndlastworld = self.__lastworld
+                    self.__lastworld = self.__world
+                    self.__world.next_generation()
+                    self.__generation += 1
         sleep(1)
         print("\nSkipping generations...")
         sleep(2)
@@ -270,7 +317,18 @@ class Life(object):
         :return: string
         """
         string = f'Size: {self.__world.get_rows()}x{self.__world.get_columns()}  Alive: {self.calculate_percentage()}%'
-        string += f'  Delay:  {self.__delay} second(s)   Generation: {self.__generation}\n'
+        if self.__worldType == World:
+            world = 'Normal'
+        else:
+            world  = "Disk"
+        string += f'  Delay: {self.__delay} sec.  Generation: {self.__generation}  World Type: {world}'
+        stayAlive = str(Rules.stayAlive)
+        #stayAlive = Rules.ruleSets[set]['stayAlive']
+        stayAlive1 = stayAlive[0]
+        stayAlive2 = stayAlive[1]
+        becomeAlive = str(Rules.becomeAlive)
+        #becomeAlive = Rules.ruleSets[set]['becomeAlive']
+        string +=  f'  Rules: {stayAlive1} or {stayAlive2} neighbors to stay alive, {becomeAlive} neighbors to become alive\n'
         print(string)
 
     def get_alive(self):
@@ -308,32 +366,8 @@ class Life(object):
         if parameter:
             self.__delay = parameter
         else:
-            self.__delay = toolbox.get_integer("How many seconds do you want between each generation? ")
+            self.__delay = toolbox.get_positive_number("How many seconds do you want between each generation? ")
         print(f"Delay is now {self.__delay} second(s).\n")
-
-    def create_longl(self):
-        """
-        prints a world with a long l shape of cells alive
-        :return:
-        """
-        self.__world = World(12, 51)
-        self.__world.longl()
-        sleep(1)
-        print("\n...Creating new world...\n")
-        sleep(2)
-        print(self.__world)
-
-    def create_acorn(self):
-        """
-        creates a world with the smallest cells alive that will go on the longest time
-        :return:
-        """
-        self.__world = World(12, 51)
-        self.__world.acorn()
-        sleep(1)
-        print("\n...Creating new world...\n")
-        sleep(2)
-        print(self.__world)
 
     def change_graphics(self, whichCharacters):
         """Change the live and dead characters for the cells."""
@@ -361,14 +395,13 @@ class Life(object):
     def display(self):
         """
         Prints the world, status bar and menu
-        :return:
+        :return: None
         """
+        print()
+        print('****************************************************************')
+        print()
         print(self.__world)
         print(self.show_status())
-        """if self.__menu == 'main':
-            print(self.__world, self.show_status())
-        elif self.__menu == 'more':
-            print(self.__world, self.show_status())"""
 
     def get_alive_graphic(self):
         """
@@ -395,6 +428,7 @@ class Life(object):
         :param myPath: location of file it will save to
         :return: string telling user it was saved
         """
+        allFiles = os.listdir(myPath)
         if filename == None:
             filename = toolbox.get_string("What would you like to call the file? ")
         if filename[-5:] != '.life':
@@ -402,9 +436,17 @@ class Life(object):
         if not os.path.isdir(myPath):
             os.mkdir(myPath)
         if filename[0:len(myPath)] != myPath:
-            filename = filename + myPath
-        self.__world.save(filename)
-        return f'Saved {filename}'
+            filename = myPath + filename
+        if filename in allFiles:
+            answer = toolbox.yes_or_no("Are you sure you want to save?")
+            if answer:
+                self.__world.save(filename)
+                print(f'Saved {filename}')
+            else:
+                print(f"{filename} not saved")
+        else:
+            self.__world.save(filename)
+            print(f'Saved {filename}')
 
     def load(self, filename, myPath='./'):
         """
@@ -413,25 +455,81 @@ class Life(object):
         :param myPath: location of file it comes from
         :return:
         """
+        allFiles = os.listdir(myPath)
         if filename == None:
+            print("Here are your options to load:\n")
+            for file in allFiles:
+                print(file)
+                print()
             filename = toolbox.get_string("Which file do you want to load? ")
         if filename[-5:] != '.life':
             filename += '.life'
-        allFiles = os.listdir(myPath)
         if filename not in allFiles:
             print('404: File not found...')
         else:
             if filename[0:len(myPath)] != myPath:
-                filename = filename + myPath
+                filename = myPath + filename
             sleep(1)
             print(f"...loading {filename}...")
             sleep(2)
-            self.__world = World.from_file(filename)
+            self.__world = self.__worldType.from_file(filename, self.__worldType)
+        print(self.__world)
 
+    def get_geometry(self):
+        print("""
+        1) Normal World
+        2) Torus World (no corners, world wraps around)
+        """)
+        geometry = toolbox.get_integer("What type of world would you like to have?")
+        if geometry == 1:
+            self.__worldType = World
+        else:
+            self.__worldType = World_Torus
+        sleep(1)
+        print("...creating new world...")
+        sleep(2)
+        print(self.__world)
+        self.show_status()
 
-    """if __name__ =='__main__':
-        simulation = Life()
-        simulation.main()"""
+    def change_rules(self, whichNumbers):
+        """
+
+        :param whichNumbers:
+        :return:
+        """
+        if whichNumbers:
+            if toolbox.is_integer(whichNumbers) and \
+                    1 <= int(whichNumbers) <= len(Rules.ruleSets.keys()):
+                whichNumbers = int(whichNumbers)
+        else:
+            print('**************************************')
+            for number, set in enumerate(Rules.ruleSets):
+                stayAlive = Rules.ruleSets[set]['stayAlive']
+                stayAlive1 = stayAlive[0]
+                stayAlive2 = stayAlive[1]
+                becomeAlive = Rules.ruleSets[set]['becomeAlive']
+                string = f'{number + 1}: Neighbors needed for cell to stay alive: {stayAlive1}, {stayAlive2}     '
+                string += f'Neighbors needed for cell to become alive: {becomeAlive}'
+                print(string)
+            print(f'{number + 2}: pick your own characters')
+            print('**************************************')
+            prompt = 'What character set would you like to use?'
+            whichNumbers = toolbox.get_integer_between(1, number + 2, prompt)
+            if whichNumbers == number + 2:
+                print()
+                string = 'You can pick 2 number amounts of neighbors so that an  alive cell stays alive. '
+                string += '\nFor example, typing "23" makes it so if a cell has 2 or 3 neighbors, it stays alive. '
+                string += '\nHow many neighbors do you want? Please type a 2 digit number: '
+                stay = toolbox.get_string(string)
+                become = toolbox.get_string('Which number of neighbors would you like to change a cell from dead to alive? (One digit number)  ')
+                Rules.set_rules_user_values(stay, become)
+        setString = list(Rules.ruleSets.keys())[whichNumbers - 1]
+        Rules.set_rules(setString)
+        self.display()
+
+if __name__ =='__main__':
+    simulation = Life()
+    simulation.main()
 
 
 

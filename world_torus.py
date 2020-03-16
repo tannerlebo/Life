@@ -33,7 +33,7 @@ class World_Torus(World):
                         cell.add_neighbor(self._grid[self._rows - 1][self._columns - 1])
                         cell.add_neighbor(self._grid[row][self._columns - 1])
                         cell.add_neighbor(self._grid[self._rows - 1][column])
-                        cell.add_neighbor(self._grid[row][self._columns - 1])
+                        cell.add_neighbor(self._grid[row+1][self._columns - 1])
                     elif column < (self._columns - 1):
                         # print('upper')
                         cell.add_neighbor(self._grid[row][column - 1])
@@ -54,7 +54,7 @@ class World_Torus(World):
                         cell.add_neighbor(self._grid[row][0])
                         cell.add_neighbor(self._grid[self._rows - 1][0])
                         cell.add_neighbor(self._grid[self._rows - 1][column])
-                        cell.add_neighbor(self._grid[self._rows - 1][self._columns - 1])
+                        cell.add_neighbor(self._grid[self._rows - 1][column - 1])
                 # middle area
                 elif row < (self._rows - 1):
                     if column == 0:
@@ -66,7 +66,7 @@ class World_Torus(World):
                         cell.add_neighbor(self._grid[row - 1][column + 1])
                         cell.add_neighbor(self._grid[row - 1][self._columns - 1])
                         cell.add_neighbor(self._grid[row][self._columns - 1])
-                        cell.add_neighbor(self._grid[row][self._columns - 1])
+                        cell.add_neighbor(self._grid[row+1][self._columns - 1])
                     elif column < (self._columns - 1):
                         # print('normal')
                         cell.add_neighbor(self._grid[row][column + 1])
@@ -86,7 +86,8 @@ class World_Torus(World):
                         cell.add_neighbor(self._grid[row - 1][column - 1])
                         cell.add_neighbor(self._grid[row - 1][0])
                         cell.add_neighbor(self._grid[row][0])
-                        cell.add_neighbor(self._grid[row][0])
+                        cell.add_neighbor(self._grid[row+1][0])
+
                 # bottom row
                 else:
                     if column == 0:

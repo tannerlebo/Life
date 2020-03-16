@@ -11,6 +11,7 @@ class Cell(object):
     }
 
     displaySet = 'basic'
+    currentDisplaySet = 'basic'
     liveChar = displaySets[displaySet]['liveChar']
     deadChar = displaySets[displaySet]['deadChar']
 

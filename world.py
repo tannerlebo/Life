@@ -1,11 +1,12 @@
 from cell import Cell
+from rules import Rules
 import random
 class World(object):
 
     @classmethod
-    def from_file(cls, filename):
+    def from_file(cls, filename, world):
         """
-        Takes world from file and converts it to graphics the user wanats.
+        Takes world from file and converts it to graphics the user wants.
         :param filename:
         :return: the new world they loaded
         """
@@ -14,7 +15,7 @@ class World(object):
 
         rows = len(text)
         columns = len(text[0])
-        newWorld = World(rows, columns)
+        newWorld = world(rows, columns)
         for rowNumber, row in enumerate(text):
             for columnNumber, cellText in enumerate(row):
                 if cellText == Cell.displaySets['basic']['liveChar']:
@@ -29,6 +30,8 @@ class World(object):
         self._columns = columns
         self._grid = self.create_grid()
         self.create_neighbors()
+        self._timeline = []
+
 
     def __str__(self):
         """Return a string that represents the current generation. For example,
@@ -180,13 +183,18 @@ class World(object):
         for row in self._grid:
             for cell in row:
                 if cell.get_living() == True:
-                    if cell.living_neighbors() in [2, 3]:
+                    """stayAlive = Rules.ruleSets[Rules.ruleSet]['stayAlive']
+                    neighbor1 = stayAlive[0]
+                    neighbor2 = stayAlive[1]"""
+                    if str(cell.living_neighbors()) in str(Rules.stayAlive):
                         newGrid[cell.get_row()][cell.get_column()].set_living(True)
                 else:
-                    if cell.living_neighbors() == 3:
+                    #becomeAlive = Rules.ruleSets[Rules.ruleSet]['becomeAlive']
+                    if str(cell.living_neighbors()) == str(Rules.becomeAlive):
                         newGrid[cell.get_row()][cell.get_column()].set_living(True)
         self._grid = newGrid
         self.create_neighbors()
+        self._timeline.append(self.__str__())
 
     def randomize(self, percentage=50):
         """
@@ -214,30 +222,6 @@ class World(object):
     def get_grid(self):
         return self._grid
 
-    def longl(self):
-        """
-        sets cells as a long l
-        :return:
-        """
-        self.set_cell(6, 25, True)
-        self.set_cell(5, 25, True)
-        self.set_cell(4, 25, True)
-        self.set_cell(7, 25, True)
-        self.set_cell(7, 26, True)
-
-    def acorn(self):
-        """
-        sets cells as an acorn
-        :return:
-        """
-        self.set_cell(5, 25, True)
-        self.set_cell(4, 23, True)
-        self.set_cell(6, 26, True)
-        self.set_cell(6, 27, True)
-        self.set_cell(6, 28, True)
-        self.set_cell(6, 23, True)
-        self.set_cell(6, 22, True)
-
     def save(self, filename):
         """
         opens the file as the basic display set and saves it as such
@@ -250,4 +234,14 @@ class World(object):
         Cell.set_display(currentDisplaySet)
         with open(filename, 'w') as myFile:
             myFile.write(text)
+
+    def stop_simulation(self):
+        stop = False
+        currentGen = self.__str__()
+        for pastGeneration in self._timeline[-3:-1]:
+            if currentGen == pastGeneration:
+                stop = True
+        return stop
+
+
         
