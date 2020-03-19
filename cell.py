@@ -6,12 +6,12 @@ class Cell(object):
                     'circles': {'liveChar': '\u26AA', 'deadChar': '\u26AB'},
                     'baseball': {'liveChar': '\u26BE', 'deadChar': '\u26F3'},
                     'atsign': {'liveChar': '@', 'deadChar': ' '},
-                    'check': {'liveChar': '\u2705', 'deadChar': '\u274C'},
-                    'user': {'liveChar': '*your choice*', 'deadChar': '*your choice*'}
+                    'check': {'liveChar': '\u2705', 'deadChar': '\u274C'}
 
     }
 
     displaySet = 'basic'
+    currentDisplaySet = 'basic'
     liveChar = displaySets[displaySet]['liveChar']
     deadChar = displaySets[displaySet]['deadChar']
 
@@ -36,10 +36,26 @@ class Cell(object):
         else:
             raise ValueError(f'DisplaySet must be in {legalValues}.')
 
+    @classmethod
+    def set_display_user_values(cls, alive, dead):
+        """
+        Add an item to the displaySets for user defined characters.
+        :param alive: character string that represents alive cells.
+        :param dead: character string that represents dead cells.
+        :return: None
+        """
+        numberOfCharacterSets = len(Cell.displaySets)
+        key = f'user defined {numberOfCharacterSets}'
+        Cell.displaySets[key] = {'liveChar': alive, 'deadChar': dead}
+
     def __init__(self, row, column):
-        """Given a row and a column, creates a cell that knows its row,
+        """
+        Given a row and a column, creates a cell that knows its row,
            column, living (all cells start off with living as False), and
-           neighbors (all cells start off with an empty list for neighbors)."""
+           neighbors (all cells start off with an empty list for neighbors).
+        :param row: amount of rows
+        :param column: amount of columns
+        """
         self.__row = row
         self.__column = column
         self.living = False
@@ -47,8 +63,11 @@ class Cell(object):
 
 
     def __str__(self):
-        """Returns either the liveChar or the deadChar for the Cell class
-           depending on the state of the cell."""
+        """
+        Returns either the liveChar or the deadChar for the Cell class
+        depending on the state of the cell.
+        :return: the state of the cell
+        """
         if self.living:
             return Cell.liveChar
         else:
@@ -59,7 +78,11 @@ class Cell(object):
         return self.living
 
     def set_living(self, state):
-        """Sets whether the cell is alive or dead."""
+        """
+        Sets whether the cell is alive or dead.
+        :param state: if the cell is alive or dead
+        :return:
+        """
         if isinstance(state, bool):
             self.living = state
         else:
@@ -72,6 +95,11 @@ class Cell(object):
         return self.__column
 
     def add_neighbor(self, cell):
+        """
+        adds the neighbor cell to the list of neighhbors
+        :param cell: the cell that is a neighbor to a given cell
+        :return:
+        """
         #
         # Print statement below is for debugging. Comment
         # out you know all the neighbors are working.
@@ -80,6 +108,10 @@ class Cell(object):
         self.__neighbors.append(cell)
 
     def living_neighbors(self):
+        """
+        counts of the number of living cells a given cell has.
+        :return: the number of living cells
+        """
         neighborCount = 0
         for neighbor in self.__neighbors:
             if neighbor.get_living() == True:
@@ -94,7 +126,10 @@ class Cell(object):
         return f'Cell({self.__row},{self.__column}) [{state}]'
 
     def debug(self):
-        """Sometimes you just need to know about a cell."""
+        """
+        Sometimes you just need to know about a cell.
+        :return:
+        """
         neighbors = len(self.__neighbors)
         string = self.__repr__() + f' neighbors: {self.living_neighbors()}/{neighbors}'
         for neighbor in self.__neighbors:

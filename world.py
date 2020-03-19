@@ -1,15 +1,21 @@
 from cell import Cell
+from rules import Rules
 import random
 class World(object):
 
     @classmethod
-    def from_file(cls, filename):
+    def from_file(cls, filename, world):
+        """
+        Takes world from file and converts it to graphics the user wants.
+        :param filename:
+        :return: the new world they loaded
+        """
         with open(filename, 'r') as myFile:
             text = myFile.readlines()
 
         rows = len(text)
         columns = len(text[0])
-        newWorld = World(rows, columns)
+        newWorld = world(rows, columns)
         for rowNumber, row in enumerate(text):
             for columnNumber, cellText in enumerate(row):
                 if cellText == Cell.displaySets['basic']['liveChar']:
@@ -20,10 +26,12 @@ class World(object):
 
 
     def __init__(self, rows, columns):
-        self.__rows = rows
-        self.__columns = columns
-        self.__grid = self.create_grid()
+        self._rows = rows
+        self._columns = columns
+        self._grid = self.create_grid()
         self.create_neighbors()
+        self._timeline = []
+
 
     def __str__(self):
         """Return a string that represents the current generation. For example,
@@ -43,29 +51,35 @@ class World(object):
         would rely on the cell to know how it should be printed.
         """
         string = ''
-        for row in self.__grid:
+        for row in self._grid:
             for cell in row:
                 string += cell.__str__()
             string += '\n'
         return string
 
     def create_grid(self):
-        """Return the grid as a list of lists. There should be one list
+        """
+        Return the grid as a list of lists. There should be one list
         to contain the entire grid and in that list there should be one
         list to contain each row in the generation. Each of the "row lists"
-        should contain one object of class Cell for each column in the world."""
+        should contain one object of class Cell for each column in the world.
+        :return: a list of the grid
+        """
 
         grid = []
-        for rowNumber in range(self.__rows):
+        for rowNumber in range(self._rows):
             row = []
-            for columnNumber in range(self.__columns):
+            for columnNumber in range(self._columns):
                 row.append(Cell(rowNumber, columnNumber))
             grid.append(row)
         return grid
 
     def create_neighbors(self):
-        """Loop through the grid and assign the neighbors to each cell."""
-        for row in self.__grid:
+        """
+        Loop through the grid and assign the neighbors to each cell.
+        :return:
+        """
+        for row in self._grid:
             for cell in row:
                 #
                 # There are some nine situations that we have to account for:
@@ -87,163 +101,151 @@ class World(object):
                 if row == 0:
                     if column == 0:
                         #print('upper left')
-                        cell.add_neighbor(self.__grid[row][column+1])
-                        cell.add_neighbor(self.__grid[row+1][column])
-                        cell.add_neighbor(self.__grid[row+1][column+1])
-                        cell.add_neighbor(self.__grid[self.__rows-1][column])
-                        cell.add_neighbor(self.__grid[self.__rows-1][self.__columns-1])
-                        cell.add_neighbor(self.__grid[row][self.__columns-1])
-                        cell.add_neighbor(self.__grid[self.__rows-1][column])
-                        cell.add_neighbor(self.__grid[row][self.__columns-1])
-                    elif column < (self.__columns - 1):
+                        cell.add_neighbor(self._grid[row][column + 1])
+                        cell.add_neighbor(self._grid[row + 1][column])
+                        cell.add_neighbor(self._grid[row + 1][column + 1])
+                    elif column < (self._columns - 1):
                         #print('upper')
-                        cell.add_neighbor(self.__grid[row][column-1])
-                        cell.add_neighbor(self.__grid[row][column+1])
-                        cell.add_neighbor(self.__grid[row+1][column-1])
-                        cell.add_neighbor(self.__grid[row+1][column])
-                        cell.add_neighbor(self.__grid[row+1][column+1])
-                        cell.add_neighbor(self.__grid[self.__rows-1][column - 1])
-                        cell.add_neighbor(self.__grid[self.__rows-1][column])
-                        cell.add_neighbor(self.__grid[self.__rows-1][column + 1])
-
+                        cell.add_neighbor(self._grid[row][column - 1])
+                        cell.add_neighbor(self._grid[row][column + 1])
+                        cell.add_neighbor(self._grid[row + 1][column - 1])
+                        cell.add_neighbor(self._grid[row + 1][column])
+                        cell.add_neighbor(self._grid[row + 1][column + 1])
                     else:
                         #print('upper right')
-                        cell.add_neighbor(self.__grid[row][column-1])
-                        cell.add_neighbor(self.__grid[row+1][column-1])
-                        cell.add_neighbor(self.__grid[row+1][column])
-                        cell.add_neighbor(self.__grid[row+1][0])
-                        cell.add_neighbor(self.__grid[row][0])
-                        cell.add_neighbor(self.__grid[self.__rows - 1][0])
-                        cell.add_neighbor(self.__grid[self.__rows - 1][column])
-                        cell.add_neighbor(self.__grid[self.__rows-1][self.__columns - 1])
+                        cell.add_neighbor(self._grid[row][column - 1])
+                        cell.add_neighbor(self._grid[row + 1][column - 1])
+                        cell.add_neighbor(self._grid[row + 1][column])
                 # middle area
-                elif row < (self.__rows - 1):
+                elif row < (self._rows - 1):
                     if column == 0:
                         #print('far left side')
-                        cell.add_neighbor(self.__grid[row][column+1])
-                        cell.add_neighbor(self.__grid[row+1][column])
-                        cell.add_neighbor(self.__grid[row+1][column+1])
-                        cell.add_neighbor(self.__grid[row-1][column])
-                        cell.add_neighbor(self.__grid[row-1][column+1])
-                        cell.add_neighbor(self.__grid[row - 1][self.__columns - 1])
-                        cell.add_neighbor(self.__grid[row][self.__columns - 1])
-                        cell.add_neighbor(self.__grid[row][self.__columns - 1])
-                    elif column < (self.__columns - 1):
+                        cell.add_neighbor(self._grid[row][column + 1])
+                        cell.add_neighbor(self._grid[row + 1][column])
+                        cell.add_neighbor(self._grid[row + 1][column + 1])
+                        cell.add_neighbor(self._grid[row - 1][column])
+                        cell.add_neighbor(self._grid[row - 1][column + 1])
+                    elif column < (self._columns - 1):
                         #print('normal')
-                        cell.add_neighbor(self.__grid[row][column+1])
-                        cell.add_neighbor(self.__grid[row][column-1])
-                        cell.add_neighbor(self.__grid[row+1][column])
-                        cell.add_neighbor(self.__grid[row+1][column+1])
-                        cell.add_neighbor(self.__grid[row-1][column-1])
-                        cell.add_neighbor(self.__grid[row-1][column])
-                        cell.add_neighbor(self.__grid[row-1][column+1])
-                        cell.add_neighbor(self.__grid[row+1][column-1])
+                        cell.add_neighbor(self._grid[row][column + 1])
+                        cell.add_neighbor(self._grid[row][column - 1])
+                        cell.add_neighbor(self._grid[row + 1][column])
+                        cell.add_neighbor(self._grid[row + 1][column + 1])
+                        cell.add_neighbor(self._grid[row - 1][column - 1])
+                        cell.add_neighbor(self._grid[row - 1][column])
+                        cell.add_neighbor(self._grid[row - 1][column + 1])
+                        cell.add_neighbor(self._grid[row + 1][column - 1])
                     else:
                         #print('far right side')
-                        cell.add_neighbor(self.__grid[row][column-1])
-                        cell.add_neighbor(self.__grid[row+1][column])
-                        cell.add_neighbor(self.__grid[row+1][column-1])
-                        cell.add_neighbor(self.__grid[row-1][column])
-                        cell.add_neighbor(self.__grid[row-1][column-1])
-                        cell.add_neighbor(self.__grid[row - 1][0])
-                        cell.add_neighbor(self.__grid[row][0])
-                        cell.add_neighbor(self.__grid[row][0])
+                        cell.add_neighbor(self._grid[row][column - 1])
+                        cell.add_neighbor(self._grid[row + 1][column])
+                        cell.add_neighbor(self._grid[row + 1][column - 1])
+                        cell.add_neighbor(self._grid[row - 1][column])
+                        cell.add_neighbor(self._grid[row - 1][column - 1])
                 # bottom row
                 else:
                     if column == 0:
                         #print('lower left')
-                        cell.add_neighbor(self.__grid[row][column+1])
-                        cell.add_neighbor(self.__grid[row-1][column])
-                        cell.add_neighbor(self.__grid[row-1][column+1])
-                        cell.add_neighbor(self.__grid[row-1][self.__columns-1])
-                        cell.add_neighbor(self.__grid[row][self.__columns - 1])
-                        cell.add_neighbor(self.__grid[0][self.__columns - 1])
-                        cell.add_neighbor(self.__grid[0][column])
-                        cell.add_neighbor(self.__grid[0][column+1])
-                    elif column < (self.__columns - 1):
+                        cell.add_neighbor(self._grid[row][column + 1])
+                        cell.add_neighbor(self._grid[row - 1][column])
+                        cell.add_neighbor(self._grid[row - 1][column + 1])
+                    elif column < (self._columns - 1):
                         #print('lower')
-                        cell.add_neighbor(self.__grid[row][column-1])
-                        cell.add_neighbor(self.__grid[row][column+1])
-                        cell.add_neighbor(self.__grid[row-1][column-1])
-                        cell.add_neighbor(self.__grid[row-1][column])
-                        cell.add_neighbor(self.__grid[row-1][column+1])
-                        cell.add_neighbor(self.__grid[0][column - 1])
-                        cell.add_neighbor(self.__grid[0][column])
-                        cell.add_neighbor(self.__grid[0][column + 1])
+                        cell.add_neighbor(self._grid[row][column - 1])
+                        cell.add_neighbor(self._grid[row][column + 1])
+                        cell.add_neighbor(self._grid[row - 1][column - 1])
+                        cell.add_neighbor(self._grid[row - 1][column])
+                        cell.add_neighbor(self._grid[row - 1][column + 1])
                     else:
                         #print('lower right')
-                        cell.add_neighbor(self.__grid[row][column-1])
-                        cell.add_neighbor(self.__grid[row-1][column-1])
-                        cell.add_neighbor(self.__grid[row-1][column])
-                        cell.add_neighbor(self.__grid[row - 1][0])
-                        cell.add_neighbor(self.__grid[row][0])
-                        cell.add_neighbor(self.__grid[0][0])
-                        cell.add_neighbor(self.__grid[0][column])
-                        cell.add_neighbor(self.__grid[0][column - 1])
+                        cell.add_neighbor(self._grid[row][column - 1])
+                        cell.add_neighbor(self._grid[row - 1][column - 1])
+                        cell.add_neighbor(self._grid[row - 1][column])
 
     def set_cell(self, row, column, living):
-        """Change the state of the cell at self.__grid[row][column] to the
-         value of living."""
-        self.__grid[row][column].set_living(living)
+        """
+        Change the state of the cell at self.__grid[row][column] to the
+         value of living.
+        :param row: the row the cell is in
+        :param column: the column the cell is it
+        :param living: whether the cells is live or dead
+        :return:
+        """
+        self._grid[row][column].set_living(living)
 
     def next_generation(self):
-        """Changes the grid to the next generation after following the
-        propagation rules. """
+        """
+        Changes the grid to the next generation after following the
+        propagation rules.
+        :return:
+        """
         newGrid = self.create_grid()
-        for row in self.__grid:
+        for row in self._grid:
             for cell in row:
                 if cell.get_living() == True:
-                    if cell.living_neighbors() in [2, 3]:
+                    """stayAlive = Rules.ruleSets[Rules.ruleSet]['stayAlive']
+                    neighbor1 = stayAlive[0]
+                    neighbor2 = stayAlive[1]"""
+                    if str(cell.living_neighbors()) in str(Rules.stayAlive):
                         newGrid[cell.get_row()][cell.get_column()].set_living(True)
                 else:
-                    if cell.living_neighbors() == 3:
+                    #becomeAlive = Rules.ruleSets[Rules.ruleSet]['becomeAlive']
+                    if str(cell.living_neighbors()) == str(Rules.becomeAlive):
                         newGrid[cell.get_row()][cell.get_column()].set_living(True)
-        self.__grid = newGrid
+        self._grid = newGrid
         self.create_neighbors()
+        self._timeline.append(self.__str__())
 
     def randomize(self, percentage=50):
-        """Takes a cell and randomizes whether it is dead or alive."""
+        """
+        Takes a cell and randomizes whether it is dead or alive.
+        :param percentage: percent change a cell is alive
+        :return:
+        """
         newGrid = self.create_grid()
-        for row in self.__grid:
+        for row in self._grid:
             for cell in row:
                 number = random.randint(1,100)
                 if number <= percentage:
                     newGrid[cell.get_row()][cell.get_column()].set_living(True)
                 else:
                     newGrid[cell.get_row()][cell.get_column()].set_living(False)
-        self.__grid = newGrid
+        self._grid = newGrid
         self.create_neighbors()
 
     def get_rows(self):
-        return self.__rows
+        return self._rows
 
     def get_columns(self):
-        return self.__columns
+        return self._columns
 
     def get_grid(self):
-        return self.__grid
-
-    def longl(self):
-        self.set_cell(6, 25, True)
-        self.set_cell(5, 25, True)
-        self.set_cell(4, 25, True)
-        self.set_cell(7, 25, True)
-        self.set_cell(7, 26, True)
-
-    def acorn(self):
-        self.set_cell(5, 25, True)
-        self.set_cell(4, 23, True)
-        self.set_cell(6, 26, True)
-        self.set_cell(6, 27, True)
-        self.set_cell(6, 28, True)
-        self.set_cell(6, 23, True)
-        self.set_cell(6, 22, True)
+        return self._grid
 
     def save(self, filename):
+        """
+        opens the file as the basic display set and saves it as such
+        :param filename: name they want to call the file
+        :return:
+        """
         currentDisplaySet = Cell.currentDisplaySet
         Cell.set_display('basic')
         text = self.__str__()
         Cell.set_display(currentDisplaySet)
         with open(filename, 'w') as myFile:
             myFile.write(text)
+
+    def stop_simulation(self):
+        """
+        checks if the simulation is stable, returns True if it is
+        :return: stop
+        """
+        stop = False
+        currentGen = self.__str__()
+        for pastGeneration in self._timeline[-3:-1]:
+            if currentGen == pastGeneration:
+                stop = True
+        return stop
+
+
         
