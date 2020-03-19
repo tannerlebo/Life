@@ -370,7 +370,11 @@ class Life(object):
         print(f"Delay is now {self.__delay} second(s).\n")
 
     def change_graphics(self, whichCharacters):
-        """Change the live and dead characters for the cells."""
+        """
+        Changes the alive and dead cells to characters of the users choice
+        :param whichCharacters: the characters that the user wants to change the alive and dead cells to.
+        :return:
+        """
         if toolbox.is_integer(whichCharacters) and \
                 1 <= int(whichCharacters) <= len(Cell.displaySets.keys()):
             whichCharacters = int(whichCharacters)
@@ -395,7 +399,7 @@ class Life(object):
     def display(self):
         """
         Prints the world, status bar and menu
-        :return: None
+        :return:
         """
         print()
         print('****************************************************************')
@@ -476,6 +480,10 @@ class Life(object):
         print(self.__world)
 
     def get_geometry(self):
+        """
+        Changes the type of world from a world with boundaries or a wrap around world
+        :return:
+        """
         print("""
         1) Normal World
         2) Torus World (no corners, world wraps around)
@@ -493,7 +501,7 @@ class Life(object):
 
     def change_rules(self, whichNumbers):
         """
-
+        Changes the rules of life, from how many neighbors it takes for a cell to remain alive or become alive
         :param whichNumbers:
         :return:
         """

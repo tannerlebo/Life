@@ -236,6 +236,10 @@ class World(object):
             myFile.write(text)
 
     def stop_simulation(self):
+        """
+        checks if the simulation is stable, returns True if it is
+        :return: stop
+        """
         stop = False
         currentGen = self.__str__()
         for pastGeneration in self._timeline[-3:-1]:

@@ -3,7 +3,10 @@ from world import World
 class World_Torus(World):
 
     def create_neighbors(self):
-        """Loop through the grid and assign the neighbors to each cell."""
+        """
+        Loop through the grid and assign the neighbors to each cell.
+        :return:
+        """
         for row in self._grid:
             for cell in row:
                 #

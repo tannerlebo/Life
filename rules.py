@@ -20,6 +20,11 @@ class Rules(object):
 
     @classmethod
     def set_rules(cls, ruleSet):
+        """
+        Changes the set of rules for the life game
+        :param ruleSet: the name of the set of rules to make the game
+        :return:
+        """
         legalValues = cls.ruleSets.keys()
         if ruleSet in legalValues:
             cls.ruleSet = ruleSet
@@ -33,6 +38,12 @@ class Rules(object):
 
     @classmethod
     def set_rules_user_values(cls, stayAlive, becomeAlive):
+        """
+        sets the rules that the user inputs as the new rules
+        :param stayAlive: number of neighbors needed for cell to remain alive
+        :param becomeAlive: number of neighbors needed for cell to become alive
+        :return:
+        """
         numberOfCharacterSets = len(Rules.ruleSets)
         key = f'user defined {numberOfCharacterSets}'
         Rules.ruleSets[key] = {'stayAlive': stayAlive, 'becomeAlive': becomeAlive}
