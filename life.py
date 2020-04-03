@@ -65,7 +65,7 @@ class Life(object):
         :return:
         """
         if self.__menu == 'main':
-            print("N[E]w  [N]ext  [R]un  [F]illrate  [J]ump  [S]ize  [J]ump  Sa[V]e  L[O]ad  [M]ore  [H]elp  [Q]uit")
+            print("N[E]w  [N]ext  [R]un  [F]illrate  [J]ump  [S]ize  Sa[V]e  L[O]ad  [M]ore  [H]elp  [Q]uit")
         if self.__menu == 'more':
             print("[D]elay  [G]raphics  R[U]les  Sa[V]e  L[O]ad  [W]orldType  [B]ack  [H]elp  [Q]uit")
 
