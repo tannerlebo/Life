@@ -265,30 +265,21 @@ class Life(object):
 
         if parameter:
             for generation in range(1, (int(parameter) + 1)):
-                stop = self.stop_simulation()
+                stop = self.__world.stop_simulation()
                 if stop:
                     print()
                     print("Simulation is stable.")
                     print()
                     break
-                else:
-                    self.__2ndlastworld = self.__lastworld
-                    self.__lastworld = self.__world
-                    self.__world.next_generation()
             self.__generation += parameter
         else:
             for generation in range(1, ((self.get_generations())+1)):
-                stop = self.stop_simulation()
+                stop = self.__world.stop_simulation()
                 if stop:
                     print()
                     print("Simulation is stable.")
                     print()
                     break
-                else:
-                    self.__2ndlastworld = self.__lastworld
-                    self.__lastworld = self.__world
-                    self.__world.next_generation()
-                    self.__generation += 1
         sleep(1)
         print("\nSkipping generations...")
         sleep(2)
